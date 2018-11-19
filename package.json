@@ -1,0 +1,44 @@
+{
+  "name": "image-splitter",
+  "version": "1.0.0",
+  "description": "a tool for splitting images",
+  "main": "./src/index.js",
+  "scripts": {
+    "postinstall": "electron-builder install-app-deps",
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
+  },
+  "build": {
+    "productName": "Image Splitter Prototype",
+    "extraFiles": [
+      "./src/environment/config/config.json"
+    ]
+  },
+  "keywords": [
+    "image",
+    "splitter"
+  ],
+  "author": "nbriones",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/jquery": "^3.3.17",
+    "electron": "latest",
+    "electron-build": "latest",
+    "electron-builder": "latest"
+  },
+  "win": {
+    "target": "NSIS"
+  },
+  "linux": {
+    "target": [
+      "AppImage",
+      "deb"
+    ]
+  },
+  "dependencies": {
+    "ba64": "^3.0.9",
+    "bootstrap": "^4.1.2",
+    "jquery": "^3.3.1"
+  }
+}
