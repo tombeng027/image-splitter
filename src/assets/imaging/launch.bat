@@ -1,0 +1,1 @@
+java -jar ./src/assets/imaging/image-splitter-1.0.jar 50.32509879079634 0.5796507896382651 49.46276778072647 99.88973297899058 "C:/Users/nbriones/Documents/TASKS/November 2018/11-13-2018 Image Splitter Tool/input/test1.jpg"

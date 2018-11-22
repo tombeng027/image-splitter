@@ -97,26 +97,45 @@ function addCanvasEvents(){
 }
 
 function getClips(){
-    if(y11 < 30 & y22 > 70){
-        //conditions for defining which side the first & second point came from
-        if(x11 < 10 & x22 > 90){
-            x11 = 0; x22 = 100;
-            clippedimg.css('clip-path','polygon(0 0, 100% 0,' + x22 + '% ' + y22 + '%, ' + x11 + '% ' + y11 + '%)');
-        }else{
-            y11 = 0; y22 = 100;
-            clippedimg.css('clip-path','polygon(0 0, '+ x11  + '% '+  y11 + '%, '+ x22 + '% ' + y22 + '%, 0 100%)');
-        }
-    }else if(y11 > 70 & y22 < 30){
-        y22 = 0; y11 = 100;
-        clippedimg.css('clip-path','polygon(0 0, '+ x22  + '% '+  y22 + '%, '+ x11 + '% ' + y11 + '%, 0 100%)');
-    }else if(x11 < 30 & x22 > 70){
-        x11 = 0; x22 = 100;
-        clippedimg.css('clip-path','polygon(0 0, 100% 0,' + x22 + '% ' + y22 + '%, ' + x11 + '% ' + y11 + '%)');
-    }else if(x22 < 30 & x11 > 70){
-        x22 = 0; x11 = 100;
-        clippedimg.css('clip-path','polygon(0 0, 100% 0,' + x11 + '% ' + y11 + '%, ' + x22 + '% ' + y22 + '%)');
-    }
-    console.log(clippedimg.css('clip-path'));
+    // if(y11 < 30 & y22 > 70){
+    //     //conditions for defining which side the first & second point came from
+    //     if(x11 < 10 & x22 > 90){
+    //         x11 = 0; x22 = 100;
+    //         clippedimg.css('clip-path','polygon(0 0, 100% 0,' + x22 + '% ' + y22 + '%, ' + x11 + '% ' + y11 + '%)');
+    //     }else{
+    //         y11 = 0; y22 = 100;
+    //         clippedimg.css('clip-path','polygon(0 0, '+ x11  + '% '+  y11 + '%, '+ x22 + '% ' + y22 + '%, 0 100%)');
+    //     }
+    // }else if(y11 > 70 & y22 < 30){
+    //     y22 = 0; y11 = 100;
+    //     clippedimg.css('clip-path','polygon(0 0, '+ x22  + '% '+  y22 + '%, '+ x11 + '% ' + y11 + '%, 0 100%)');
+    // }else if(x11 < 30 & x22 > 70){
+    //     x11 = 0; x22 = 100;
+    //     clippedimg.css('clip-path','polygon(0 0, 100% 0,' + x22 + '% ' + y22 + '%, ' + x11 + '% ' + y11 + '%)');
+    // }else if(x22 < 30 & x11 > 70){
+    //     x22 = 0; x11 = 100;
+    //     clippedimg.css('clip-path','polygon(0 0, 100% 0,' + x11 + '% ' + y11 + '%, ' + x22 + '% ' + y22 + '%)');
+    // }
+    let filepath = images[index];
+    let content  = "java -jar ./src/assets/imaging/image-splitter-1.0.jar " + x11 + " " + y11 + " " + x22 + " " + y22 + " " + '"' + filepath + '"';
+    fs.writeFileSync('./src/assets/imaging/launch.bat', content, function(err){
+        if(err) throw err;
+    });
+    launchJAR();
+}
+
+function launchJAR(){
+//for running java jar of image splitter
+const { exec } = require('child_process');
+const path = require('path');
+exec('"./src/assets/imaging/launch.bat"', (cwd,err, stdout, stderr) => {
+  if (err) {
+    console.error(err);
+    return;
+  }
+  console.log(stdout);
+  
+});
 }
 
 function mousedown(){
@@ -125,6 +144,12 @@ function mousedown(){
         console.log('start');
         imgpreview.on('mouseover',(e)=>{
             if(isDown){
+                /*get the point where the line intersects the image represented in % of the size of the image for
+                  higher precision in scaled images. this is done by (a) getting the coordinate of the cursor when it
+                  enters the image element subtracted by image offset then converted into percentage of the image size.
+                  (b) combining the offsets of the image and the line as per needed. note: currently the line is created via
+                  div element. if using method (b) the line should have accurate offsets.
+                */
                 firstPointCaptured = true;
                 let tempx = Math.max((((e.clientX - imgpreview.offset().left)/imgpreview.width())*100), 0);
                 x11 = Math.min(tempx, 100);
